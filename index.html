@@ -1,0 +1,115 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Zambia Bids &amp; Offers</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#edf3f2;--card:#fff;--ink:#132322;--muted:#66717f;--line:#d6e2df;--teal:#0e6f69;--tealt:#e8f4f2;--cop:#c0561b;--copt:#fcefe6;--title:#0a2b2a;--inp:#fff4cf;--bad:#c0262d;
+--sans:"IBM Plex Sans",-apple-system,system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1514;--card:#12201f;--ink:#e6f0ee;--muted:#93a0af;--line:#233533;--teal:#3cb3aa;--tealt:#0f2826;--cop:#e27b3d;--copt:#33200f;--title:#071110;--inp:#3a3214;--bad:#ff8a8f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b1514;--card:#12201f;--ink:#e6f0ee;--muted:#93a0af;--line:#233533;--teal:#3cb3aa;--tealt:#0f2826;--cop:#e27b3d;--copt:#33200f;--title:#071110;--inp:#3a3214;--bad:#ff8a8f;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px}
+.wrap{max-width:480px;margin:0 auto;padding:12px 16px 120px}
+.head{background:var(--title);color:#fff;border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.head h1{margin:0;font-size:19px;letter-spacing:.2px}
+.head p{margin:4px 0 0;font-size:13px;opacity:.8}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px}
+label{display:block;font-size:12px;color:var(--muted);margin:0 0 4px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+input,select{width:100%;font:inherit;font-size:16px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--inp);color:var(--ink)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.line{border:1px solid var(--line);border-left:5px solid var(--teal);border-radius:12px;padding:10px;margin-bottom:10px;background:var(--card)}
+.line.offer{border-left-color:var(--cop)}
+.line .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.line .num{font-weight:700;font-size:14px}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{flex:1;border:0;background:transparent;color:var(--ink);font:inherit;font-weight:600;padding:9px 6px;cursor:pointer}
+.seg button.on.b{background:var(--teal);color:#fff}
+.seg button.on.o{background:var(--cop);color:#fff}
+.seg button.on.p{background:var(--title);color:#fff}
+.g{display:grid;gap:8px}
+.del{border:0;background:transparent;color:var(--bad);font:inherit;font-size:13px;cursor:pointer}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:13px;font:inherit;font-weight:700;font-size:16px;cursor:pointer}
+.add{background:var(--tealt);color:var(--teal);border:1px dashed var(--teal)}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.bar .in{max-width:480px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.wa{background:#1f9d55;color:#fff}.cp{background:var(--title);color:#fff}
+pre{white-space:pre-wrap;font-family:var(--mono);font-size:13px;background:var(--tealt);border-radius:10px;padding:10px;margin:0}
+.msg{font-size:13px;color:var(--bad);min-height:18px;margin-top:6px}
+.small{font-size:12px;color:var(--muted)}
+.clr{background:transparent;color:var(--muted);border:1px solid var(--line);margin-top:6px;font-size:14px;padding:9px}
+</style></head><body>
+<div class="wrap">
+  <div class="head"><h1>Zambia Bids &amp; Offers</h1><p>Local market bids &amp; offers with DAP equivalent</p></div>
+
+  <div class="box g">
+    <div class="row2">
+      <div><label for="dt">Date</label><input id="dt" type="date"></div>
+      <div><label for="rep">Your name</label><input id="rep" placeholder="e.g. Mwila"></div>
+    </div>
+  </div>
+
+  <div id="lines"></div>
+  <button class="btn add" onclick="addLine()">+ Add a bid / offer</button>
+
+  <div class="box" style="margin-top:12px">
+    <label>Message preview</label>
+    <pre id="pv"></pre>
+    <div class="msg" id="msg"></div>
+    <button class="btn clr" onclick="clearAll()">Clear all lines for a new day</button>
+  </div>
+  <p class="small">Bid = what a buyer will pay. Offer = what a seller is asking. Enter the price exactly as quoted (Kwacha per litre all taxes in, $/m³, or a DAP level) and its DAP equivalent in $/m³.</p>
+</div>
+<div class="bar"><div class="in">
+  <button class="btn cp" onclick="copyMsg()">Copy</button>
+  <button class="btn wa" onclick="sendWA()">Send on WhatsApp</button>
+</div></div>
+<script>
+var BL={ZMW:"ZMW/l",USD:"$/m³",DAP:"DAP $/m³"};var KEY="zmbo_v2", S={dt:"",rep:"",lines:[]};
+function today(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function load(){try{var j=JSON.parse(localStorage.getItem(KEY)||"null");if(j)S=j}catch(e){}
+  if(!S.lines||!S.lines.length)S.lines=[blank()]; S.dt=today()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function blank(){return{side:"BID",prod:"DIESEL",loc:"",cpty:"",basis:"ZMW",px:"",dap:""}}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function clean(s){return String(s||"").replace(/\|/g,"/").trim()}
+function render(){
+  document.getElementById("dt").value=S.dt;document.getElementById("rep").value=S.rep||"";
+  var h="";S.lines.forEach(function(l,i){
+    h+='<div class="line'+(l.side==="OFFER"?" offer":"")+'"><div class="top"><span class="num">Line '+(i+1)+'</span>'+
+    (S.lines.length>1?'<button class="del" onclick="delLine('+i+')">Remove</button>':'')+'</div><div class="g">'+
+    '<div class="seg"><button class="b'+(l.side==="BID"?" on":"")+'" onclick="setv('+i+',\'side\',\'BID\')">Bid</button><button class="o'+(l.side==="OFFER"?" on":"")+'" onclick="setv('+i+',\'side\',\'OFFER\')">Offer</button></div>'+
+    '<div class="seg"><button class="p'+(l.prod==="DIESEL"?" on":"")+'" onclick="setv('+i+',\'prod\',\'DIESEL\')">Diesel</button><button class="p'+(l.prod==="PETROL"?" on":"")+'" onclick="setv('+i+',\'prod\',\'PETROL\')">Petrol</button></div>'+
+    '<div class="row2"><div><label>Counterparty</label><input value="'+esc(l.cpty)+'" placeholder="Who quoted it" oninput="setv('+i+',\'cpty\',this.value,1)"></div>'+
+    '<div><label>Location</label><input value="'+esc(l.loc)+'" placeholder="e.g. Lusaka" oninput="setv('+i+',\'loc\',this.value,1)"></div></div>'+
+    '<div><label>Quoted in</label><div class="seg">'+
+      ['ZMW','USD','DAP'].map(function(b){return '<button class="p'+((l.basis||"ZMW")===b?" on":"")+'" onclick="setv('+i+',\'basis\',\''+b+'\')">'+BL[b]+'</button>'}).join('')+'</div></div>'+
+    ((l.basis||"ZMW")==="DAP"
+      ? '<div><label>DAP price $/m³</label><input inputmode="decimal" value="'+esc(l.dap)+'" placeholder="0.00" oninput="setv('+i+',\'dap\',this.value,1)"></div>'
+      : '<div class="row2"><div><label>Price '+(l.basis==="USD"?"$/m³":"ZMW/litre")+'</label><input inputmode="decimal" value="'+esc(l.px)+'" placeholder="0.00" oninput="setv('+i+',\'px\',this.value,1)"></div>'+
+        '<div><label>DAP equiv. $/m³</label><input inputmode="decimal" value="'+esc(l.dap)+'" placeholder="0.00" oninput="setv('+i+',\'dap\',this.value,1)"></div></div>')+
+    '</div></div>'});
+  document.getElementById("lines").innerHTML=h;preview()}
+function setv(i,k,v,quiet){S.lines[i][k]=v;save();if(quiet)preview();else render()}
+function addLine(){var last=S.lines[S.lines.length-1]||blank();S.lines.push({side:last.side,prod:last.prod,loc:last.loc,cpty:"",basis:last.basis||"ZMW",px:"",dap:""});save();render()}
+function delLine(i){S.lines.splice(i,1);save();render()}
+function clearAll(){S.lines=[blank()];save();render()}
+document.getElementById("dt").oninput=function(){S.dt=this.value;save();preview()};
+document.getElementById("rep").oninput=function(){S.rep=this.value;save();preview()};
+function fmtDate(s){var p=(s||"").split("-");if(p.length<3)return s;var m=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return p[2]+"-"+m[+p[1]-1]+"-"+p[0]}
+function num(v){var n=parseFloat(String(v||"").replace(/,/g,""));return isNaN(n)||n<=0?null:n}
+function build(){
+  var ok=[],bad=0,nodap=0;S.lines.forEach(function(l){var bs=l.basis||"ZMW",p=bs==="DAP"?null:num(l.px),d=num(l.dap);
+    if(bs!=="DAP"&&p===null){if(String(l.px).trim()!==""||String(l.dap).trim()!==""||clean(l.cpty))bad++;return}
+    if(bs==="DAP"&&d===null){if(String(l.dap).trim()!==""||clean(l.cpty))bad++;return}
+    if(d===null)nodap++;
+    var z=bs==="ZMW"?p.toFixed(2):"-",u=bs==="USD"?p.toFixed(2):"-",dd=d===null?"-":d.toFixed(2);
+    ok.push("ZMB | "+l.side+" | "+l.prod+" | "+(clean(l.loc)||"-")+" | "+(clean(l.cpty)||"-")+" | "+z+" | "+u+" | "+dd)});
+  var t="ZAMBIA BIDS & OFFERS\nZMB | DATE | "+fmtDate(S.dt)+"\nZMB | REP | "+(clean(S.rep)||"-")+"\n(Side | Product | Location | Counterparty | ZMW/l | $/m3 | DAP $/m3)\n"+ok.join("\n");
+  return{t:t,n:ok.length,bad:bad,nodap:nodap}}
+function preview(){var b=build();document.getElementById("pv").textContent=b.t;
+  var m=[];if(b.bad)m.push(b.bad+" line(s) have no valid price and will be left out.");if(b.nodap)m.push(b.nodap+" line(s) have no DAP equivalent.");if(!b.n)m.push("Add at least one price.");document.getElementById("msg").textContent=m.join(" ")}
+function copyMsg(){var b=build();if(!b.n)return;var done=function(){document.getElementById("msg").textContent="Copied. Paste it into WhatsApp."};
+  if(navigator.clipboard)navigator.clipboard.writeText(b.t).then(done,function(){fallback(b.t);done()});else{fallback(b.t);done()}}
+function fallback(t){var a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(e){}a.remove()}
+function sendWA(){var b=build();if(!b.n)return;window.open("https://wa.me/?text="+encodeURIComponent(b.t),"_blank")}
+load();render();
+</script></body></html>
