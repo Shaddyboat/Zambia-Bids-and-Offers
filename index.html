@@ -156,7 +156,7 @@ function render(){
   if(bb!==null&&bo!==null)sp='<div class="spread"><div>'+(bo>=bb?"Spread $"+fmt(bo-bb,0)+"/m³":"Crossed by $"+fmt(bb-bo,0)+"/m³")+'</div></div>';
   $("book").innerHTML=sideHTML("BID")+sideHTML("OFFER")+sp;
   var b=build();$("pv").textContent=b.t;
-  $("note").innerHTML=b.n?(b.n+" ready"+(b.nodap?'<br><b>'+b.nodap+' missing DAP</b>':"")):"Add a bid or offer to start";
+  $("note").innerHTML=(b.n?b.n+" ready":"Add a bid or offer to start")+(b.nodap?'<br><b>'+b.nodap+' not sent: no DAP</b>':"");
   $("send").disabled=!b.n;$("copy").disabled=!b.n}
 function fmtDate(s){var p=(s||"").split("-");return p.length<3?s:p[2]+"-"+MON[+p[1]-1]+"-"+p[0]}
 function nm(s){return String(s||"").replace(/[|·*_~]/g," ").replace(/\s+/g," ").trim()}
@@ -164,16 +164,13 @@ function money(n){return "$"+fmt(n,0)}
 function build(){var out=[],n=0,nodap=0,DAYS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   var p=(S.dt||"").split("-"),d=p.length===3?new Date(+p[0],+p[1]-1,+p[2]):new Date();
   var head="*Zambia bids & offers*\n_"+DAYS[d.getDay()]+" "+d.getDate()+" "+MON[d.getMonth()]+" "+d.getFullYear()+(nm(S.rep)?" · "+nm(S.rep):"")+"_";
-  ["DIESEL","PETROL"].forEach(function(pr){var rows=[],bb=null,bo=null;
+  ["DIESEL","PETROL"].forEach(function(pr){var rows=[];
     ["BID","OFFER"].forEach(function(sd){
       var items=S.lines.filter(function(l){return l.prod===pr&&l.side===sd}).map(function(l){return{l:l,d:num(l.dap)}});
-      items.sort(function(x,y){if(x.d===null)return 1;if(y.d===null)return -1;return sd==="BID"?y.d-x.d:x.d-y.d});
-      items.forEach(function(it){var l=it.l,bs=l.basis||"ZMW",px=num(l.px);
-        if(bs!=="DAP"&&px===null)return;if(bs==="DAP"&&it.d===null)return;
-        if(it.d===null)nodap++;else if(sd==="BID"){if(bb===null||it.d>bb)bb=it.d}else{if(bo===null||it.d<bo)bo=it.d}
-        var q=bs==="ZMW"?"K"+fmt(px,2)+"/l":(bs==="USD"?money(px)+"/m³":"");
-        rows.push((sd==="BID"?"🟢 Bid ":"🟠 Offer ")+(it.d===null?"_no DAP_":"*"+money(it.d)+"*/m³ DAP")+" · "+(nm(l.cpty)||"Unnamed")+" · "+(nm(l.loc)||"–")+(q?" · "+q:""));n++})});
-    if(rows.length){out.push("","*"+pr+"*");out=out.concat(rows);if(bb!==null&&bo!==null)out.push("_Spread "+(bo>=bb?money(bo-bb):"crossed "+money(bb-bo))+"/m³_")}});
+      items.sort(function(x,y){return sd==="BID"?y.d-x.d:x.d-y.d});
+      items.forEach(function(it){var l=it.l;if(it.d===null){if(num(l.px)!==null||nm(l.cpty))nodap++;return}
+        rows.push((sd==="BID"?"🟢 Bid ":"🟠 Offer ")+"*"+money(it.d)+"*/m³ · DAP "+(nm(l.loc)||"–")+" · "+(nm(l.cpty)||"Unnamed"));n++})});
+    if(rows.length){out.push("","*"+pr+"*");out=out.concat(rows)}});
   return{t:head+"\n"+out.join("\n"),n:n,nodap:nodap}}
 /* editor */
 var ed={i:-1,side:"BID",basis:"ZMW"};
