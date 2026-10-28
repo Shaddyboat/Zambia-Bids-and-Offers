@@ -1,115 +1,196 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Zambia Bids &amp; Offers</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<title>Zambia Order Book</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap">
 <style>
-:root{--bg:#edf3f2;--card:#fff;--ink:#132322;--muted:#66717f;--line:#d6e2df;--teal:#0e6f69;--tealt:#e8f4f2;--cop:#c0561b;--copt:#fcefe6;--title:#0a2b2a;--inp:#fff4cf;--bad:#c0262d;
---sans:"IBM Plex Sans",-apple-system,system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1514;--card:#12201f;--ink:#e6f0ee;--muted:#93a0af;--line:#233533;--teal:#3cb3aa;--tealt:#0f2826;--cop:#e27b3d;--copt:#33200f;--title:#071110;--inp:#3a3214;--bad:#ff8a8f;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0b1514;--card:#12201f;--ink:#e6f0ee;--muted:#93a0af;--line:#233533;--teal:#3cb3aa;--tealt:#0f2826;--cop:#e27b3d;--copt:#33200f;--title:#071110;--inp:#3a3214;--bad:#ff8a8f;color-scheme:dark}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px}
-.wrap{max-width:480px;margin:0 auto;padding:12px 16px 120px}
-.head{background:var(--title);color:#fff;border-radius:14px;padding:14px 16px;margin-bottom:12px}
-.head h1{margin:0;font-size:19px;letter-spacing:.2px}
-.head p{margin:4px 0 0;font-size:13px;opacity:.8}
-.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px}
-label{display:block;font-size:12px;color:var(--muted);margin:0 0 4px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
-input,select{width:100%;font:inherit;font-size:16px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--inp);color:var(--ink)}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.line{border:1px solid var(--line);border-left:5px solid var(--teal);border-radius:12px;padding:10px;margin-bottom:10px;background:var(--card)}
-.line.offer{border-left-color:var(--cop)}
-.line .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.line .num{font-weight:700;font-size:14px}
-.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.seg button{flex:1;border:0;background:transparent;color:var(--ink);font:inherit;font-weight:600;padding:9px 6px;cursor:pointer}
-.seg button.on.b{background:var(--teal);color:#fff}
-.seg button.on.o{background:var(--cop);color:#fff}
-.seg button.on.p{background:var(--title);color:#fff}
-.g{display:grid;gap:8px}
-.del{border:0;background:transparent;color:var(--bad);font:inherit;font-size:13px;cursor:pointer}
-.btn{display:block;width:100%;border:0;border-radius:12px;padding:13px;font:inherit;font-weight:700;font-size:16px;cursor:pointer}
-.add{background:var(--tealt);color:var(--teal);border:1px dashed var(--teal)}
-.bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
-.bar .in{max-width:480px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.wa{background:#1f9d55;color:#fff}.cp{background:var(--title);color:#fff}
-pre{white-space:pre-wrap;font-family:var(--mono);font-size:13px;background:var(--tealt);border-radius:10px;padding:10px;margin:0}
-.msg{font-size:13px;color:var(--bad);min-height:18px;margin-top:6px}
-.small{font-size:12px;color:var(--muted)}
-.clr{background:transparent;color:var(--muted);border:1px solid var(--line);margin-top:6px;font-size:14px;padding:9px}
+:root{--paper:#F6F8F3;--sheet:#FFFFFF;--ink:#14221A;--soft:#5E6B62;--rule:#D9E0D3;--bid:#198A00;--offer:#D9660A;--bidt:#E7F3E2;--offt:#FCEBDD;--warn:#C8102E;
+--cond:"Barlow Condensed",system-ui,sans-serif;--text:"Barlow",system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#101814;--sheet:#17221C;--ink:#E9EFE9;--soft:#9AA79E;--rule:#2A3830;--bid:#5BC23D;--offer:#F2913F;--bidt:#1B2E1A;--offt:#33241A;--warn:#FF6B7D;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#101814;--sheet:#17221C;--ink:#E9EFE9;--soft:#9AA79E;--rule:#2A3830;--bid:#5BC23D;--offer:#F2913F;--bidt:#1B2E1A;--offt:#33241A;--warn:#FF6B7D;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+body{background:var(--paper);color:var(--ink);font:400 16px/1.4 var(--text);-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--bid);outline-offset:2px}
+.wrap{max-width:520px;margin:0 auto;padding:18px 16px 140px}
+/* masthead */
+.mast{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-bottom:14px;border-bottom:3px solid var(--ink)}
+.day{font:700 52px/0.9 var(--cond);letter-spacing:-.5px}
+.day small{display:block;font:500 15px/1.3 var(--text);color:var(--soft);letter-spacing:0;margin-top:6px}
+.who{text-align:right;font-size:14px;color:var(--soft)}
+.who input{display:block;width:150px;margin-top:2px;border:0;border-bottom:1px solid var(--rule);background:transparent;text-align:right;font:600 18px var(--text);color:var(--ink);padding:2px 0}
+.who input::placeholder{color:var(--soft);font-weight:400}
+.dt{border:0;background:transparent;color:var(--soft);font-size:14px;padding:0}
+/* product switch */
+.prod{display:flex;gap:22px;margin:18px 0 6px}
+.prod button{border:0;background:none;padding:0;font:700 34px/1 var(--cond);color:var(--rule);position:relative}
+.prod button[aria-pressed="true"]{color:var(--ink)}
+.prod button .ct{font:600 14px var(--text);color:var(--soft);margin-left:4px;vertical-align:super}
+/* book */
+.book{display:grid;grid-template-columns:1fr 1fr;margin-top:10px;border-top:1px solid var(--rule)}
+.side{padding:12px 0 0;min-width:0}
+.side.b{padding-right:12px;border-right:2px solid var(--ink)}
+.side.o{padding-left:12px}
+.sh{display:flex;justify-content:space-between;align-items:baseline;font:600 15px var(--text);padding-bottom:8px}
+.b .sh{color:var(--bid)} .o .sh{color:var(--offer);flex-direction:row-reverse}
+.sh span{font-weight:400;color:var(--soft);font-size:13px}
+.q{display:block;width:100%;border:0;background:none;padding:9px 0;border-bottom:1px solid var(--rule);text-align:right}
+.o .q{text-align:left}
+.q .px{font:600 30px/1 var(--cond);font-variant-numeric:tabular-nums}
+.q .px i{font-style:normal;font-size:15px;color:var(--soft);margin-left:3px}
+.q .meta{display:block;font-size:13px;color:var(--soft);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.q.best .px{color:var(--bid)} .o .q.best .px{color:var(--offer)}
+.q .nodap{color:var(--warn);font:600 16px var(--text)}
+.add{display:block;width:100%;margin-top:10px;padding:12px 0;border:1.5px dashed currentColor;border-radius:999px;background:none;font:600 16px var(--text)}
+.b .add{color:var(--bid)} .o .add{color:var(--offer)}
+.spread{grid-column:1/3;display:flex;justify-content:center;margin-top:-1px}
+.spread div{background:var(--ink);color:var(--paper);font:600 14px var(--text);padding:5px 14px;border-radius:0 0 10px 10px}
+.empty{font-size:14px;color:var(--soft);padding:12px 0}
+.o .empty{text-align:left} .b .empty{text-align:right}
+/* message */
+details{margin-top:28px;border-top:1px solid var(--rule);padding-top:12px}
+summary{font:600 15px var(--text);color:var(--soft);cursor:pointer}
+pre{white-space:pre-wrap;font:14px/1.5 var(--text);background:var(--sheet);border-radius:8px;padding:12px;margin-top:10px}
+.newday{margin-top:12px;border:0;background:none;color:var(--warn);font-weight:600;padding:6px 0}
+/* bar */
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--paper);border-top:3px solid var(--ink);padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+.bar .in{max-width:520px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.bar .note{flex:1;min-width:96px;font-size:13px;line-height:1.3;color:var(--soft)}
+.bar .note b{color:var(--warn);font-weight:600}
+.send{border:0;border-radius:999px;background:var(--ink);color:var(--paper);font:700 20px var(--cond);padding:12px 22px;letter-spacing:.2px}
+.copy{border:0;background:none;font-weight:600;color:var(--soft);padding:12px 4px}
+.send:disabled{opacity:.35}
+/* sheet */
+dialog{border:0;padding:0;width:100%;max-width:520px;margin:auto auto 0;border-radius:18px 18px 0 0;background:var(--sheet);color:var(--ink)}
+dialog::backdrop{background:rgba(10,20,14,.45)}
+dialog[open]{animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){dialog[open]{animation:none}}
+.form{padding:18px 18px calc(18px + env(safe-area-inset-bottom))}
+.ft{font:700 30px/1 var(--cond);margin-bottom:14px}
+.ft.b{color:var(--bid)} .ft.o{color:var(--offer)}
+.fld{margin-bottom:14px}
+.fld label{display:block;font-size:14px;color:var(--soft);margin-bottom:5px}
+.fld input{width:100%;border:0;border-bottom:2px solid var(--rule);background:transparent;font:500 20px var(--text);padding:6px 0}
+.fld input:focus{border-color:var(--ink);outline:none}
+.fld input.big{font:600 34px var(--cond)}
+.chips{display:flex;gap:8px}
+.chips button{flex:1;border:1.5px solid var(--rule);background:none;border-radius:999px;padding:9px 4px;font-weight:600;font-size:15px}
+.chips button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--sheet)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.acts{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.acts .save{border:0;border-radius:999px;background:var(--ink);color:var(--sheet);font:700 20px var(--cond);padding:12px 28px}
+.acts .del{border:0;background:none;color:var(--warn);font-weight:600}
+.err{color:var(--warn);font-size:14px;min-height:20px}
 </style></head><body>
 <div class="wrap">
-  <div class="head"><h1>Zambia Bids &amp; Offers</h1><p>Local market bids &amp; offers with DAP equivalent</p></div>
-
-  <div class="box g">
-    <div class="row2">
-      <div><label for="dt">Date</label><input id="dt" type="date"></div>
-      <div><label for="rep">Your name</label><input id="rep" placeholder="e.g. Mwila"></div>
-    </div>
-  </div>
-
-  <div id="lines"></div>
-  <button class="btn add" onclick="addLine()">+ Add a bid / offer</button>
-
-  <div class="box" style="margin-top:12px">
-    <label>Message preview</label>
-    <pre id="pv"></pre>
-    <div class="msg" id="msg"></div>
-    <button class="btn clr" onclick="clearAll()">Clear all lines for a new day</button>
-  </div>
-  <p class="small">Bid = what a buyer will pay. Offer = what a seller is asking. Enter the price exactly as quoted (Kwacha per litre all taxes in, $/m³, or a DAP level) and its DAP equivalent in $/m³.</p>
+  <header class="mast">
+    <div class="day" id="day">—</div>
+    <div class="who">Reported by<input id="rep" placeholder="Your name" autocomplete="name"><input type="date" id="dt" class="dt" aria-label="Report date"></div>
+  </header>
+  <nav class="prod" aria-label="Product">
+    <button type="button" data-p="DIESEL">Diesel<span class="ct" id="ctD"></span></button>
+    <button type="button" data-p="PETROL">Petrol<span class="ct" id="ctP"></span></button>
+  </nav>
+  <section class="book" id="book" aria-live="polite"></section>
+  <details><summary>See the WhatsApp message</summary><pre id="pv"></pre>
+    <button type="button" class="newday" id="newday">Clear the book for a new day</button></details>
 </div>
 <div class="bar"><div class="in">
-  <button class="btn cp" onclick="copyMsg()">Copy</button>
-  <button class="btn wa" onclick="sendWA()">Send on WhatsApp</button>
+  <div class="note" id="note"></div>
+  <button type="button" class="copy" id="copy">Copy</button>
+  <button type="button" class="send" id="send">Send on WhatsApp</button>
 </div></div>
+<dialog id="dlg"><form class="form" method="dialog" id="frm">
+  <div class="ft" id="ft">New bid</div>
+  <div class="row2">
+    <div class="fld"><label for="f_cp">Counterparty</label><input id="f_cp" autocomplete="off"></div>
+    <div class="fld"><label for="f_loc">Location</label><input id="f_loc" autocomplete="off" placeholder="Lusaka"></div>
+  </div>
+  <div class="fld"><label>Quoted in</label><div class="chips" id="f_basis">
+    <button type="button" data-b="ZMW">Kwacha / litre</button><button type="button" data-b="USD">$ / m³</button><button type="button" data-b="DAP">DAP $ / m³</button></div></div>
+  <div class="row2" id="pxrow">
+    <div class="fld" id="f_pxw"><label for="f_px" id="f_pxl">Price, K per litre</label><input id="f_px" class="big" inputmode="decimal" autocomplete="off"></div>
+    <div class="fld"><label for="f_dap" id="f_dapl">DAP equivalent, $ per m³</label><input id="f_dap" class="big" inputmode="decimal" autocomplete="off"></div>
+  </div>
+  <div class="err" id="err"></div>
+  <div class="acts"><button type="button" class="del" id="del">Remove</button><button type="submit" class="save" id="save" value="save">Add to book</button></div>
+</form></dialog>
 <script>
-var BL={ZMW:"ZMW/l",USD:"$/m³",DAP:"DAP $/m³"};var KEY="zmbo_v2", S={dt:"",rep:"",lines:[]};
-function today(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
-function load(){try{var j=JSON.parse(localStorage.getItem(KEY)||"null");if(j)S=j}catch(e){}
-  if(!S.lines||!S.lines.length)S.lines=[blank()]; S.dt=today()}
+var KEY="zmbo_v2",S={dt:"",rep:"",prod:"DIESEL",lines:[]};
+var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var $=function(i){return document.getElementById(i)};
+function iso(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function load(){try{var j=JSON.parse(localStorage.getItem(KEY)||"null");if(j)S=Object.assign(S,j)}catch(e){}
+  S.lines=(S.lines||[]).filter(function(l){return l&&(l.px||l.dap||l.cpty)});S.dt=iso(new Date());if(!S.prod)S.prod="DIESEL"}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-function blank(){return{side:"BID",prod:"DIESEL",loc:"",cpty:"",basis:"ZMW",px:"",dap:""}}
-function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function clean(s){return String(s||"").replace(/\|/g,"/").trim()}
-function render(){
-  document.getElementById("dt").value=S.dt;document.getElementById("rep").value=S.rep||"";
-  var h="";S.lines.forEach(function(l,i){
-    h+='<div class="line'+(l.side==="OFFER"?" offer":"")+'"><div class="top"><span class="num">Line '+(i+1)+'</span>'+
-    (S.lines.length>1?'<button class="del" onclick="delLine('+i+')">Remove</button>':'')+'</div><div class="g">'+
-    '<div class="seg"><button class="b'+(l.side==="BID"?" on":"")+'" onclick="setv('+i+',\'side\',\'BID\')">Bid</button><button class="o'+(l.side==="OFFER"?" on":"")+'" onclick="setv('+i+',\'side\',\'OFFER\')">Offer</button></div>'+
-    '<div class="seg"><button class="p'+(l.prod==="DIESEL"?" on":"")+'" onclick="setv('+i+',\'prod\',\'DIESEL\')">Diesel</button><button class="p'+(l.prod==="PETROL"?" on":"")+'" onclick="setv('+i+',\'prod\',\'PETROL\')">Petrol</button></div>'+
-    '<div class="row2"><div><label>Counterparty</label><input value="'+esc(l.cpty)+'" placeholder="Who quoted it" oninput="setv('+i+',\'cpty\',this.value,1)"></div>'+
-    '<div><label>Location</label><input value="'+esc(l.loc)+'" placeholder="e.g. Lusaka" oninput="setv('+i+',\'loc\',this.value,1)"></div></div>'+
-    '<div><label>Quoted in</label><div class="seg">'+
-      ['ZMW','USD','DAP'].map(function(b){return '<button class="p'+((l.basis||"ZMW")===b?" on":"")+'" onclick="setv('+i+',\'basis\',\''+b+'\')">'+BL[b]+'</button>'}).join('')+'</div></div>'+
-    ((l.basis||"ZMW")==="DAP"
-      ? '<div><label>DAP price $/m³</label><input inputmode="decimal" value="'+esc(l.dap)+'" placeholder="0.00" oninput="setv('+i+',\'dap\',this.value,1)"></div>'
-      : '<div class="row2"><div><label>Price '+(l.basis==="USD"?"$/m³":"ZMW/litre")+'</label><input inputmode="decimal" value="'+esc(l.px)+'" placeholder="0.00" oninput="setv('+i+',\'px\',this.value,1)"></div>'+
-        '<div><label>DAP equiv. $/m³</label><input inputmode="decimal" value="'+esc(l.dap)+'" placeholder="0.00" oninput="setv('+i+',\'dap\',this.value,1)"></div></div>')+
-    '</div></div>'});
-  document.getElementById("lines").innerHTML=h;preview()}
-function setv(i,k,v,quiet){S.lines[i][k]=v;save();if(quiet)preview();else render()}
-function addLine(){var last=S.lines[S.lines.length-1]||blank();S.lines.push({side:last.side,prod:last.prod,loc:last.loc,cpty:"",basis:last.basis||"ZMW",px:"",dap:""});save();render()}
-function delLine(i){S.lines.splice(i,1);save();render()}
-function clearAll(){S.lines=[blank()];save();render()}
-document.getElementById("dt").oninput=function(){S.dt=this.value;save();preview()};
-document.getElementById("rep").oninput=function(){S.rep=this.value;save();preview()};
-function fmtDate(s){var p=(s||"").split("-");if(p.length<3)return s;var m=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];return p[2]+"-"+m[+p[1]-1]+"-"+p[0]}
 function num(v){var n=parseFloat(String(v||"").replace(/,/g,""));return isNaN(n)||n<=0?null:n}
-function build(){
-  var ok=[],bad=0,nodap=0;S.lines.forEach(function(l){var bs=l.basis||"ZMW",p=bs==="DAP"?null:num(l.px),d=num(l.dap);
-    if(bs!=="DAP"&&p===null){if(String(l.px).trim()!==""||String(l.dap).trim()!==""||clean(l.cpty))bad++;return}
-    if(bs==="DAP"&&d===null){if(String(l.dap).trim()!==""||clean(l.cpty))bad++;return}
-    if(d===null)nodap++;
-    var z=bs==="ZMW"?p.toFixed(2):"-",u=bs==="USD"?p.toFixed(2):"-",dd=d===null?"-":d.toFixed(2);
-    ok.push("ZMB | "+l.side+" | "+l.prod+" | "+(clean(l.loc)||"-")+" | "+(clean(l.cpty)||"-")+" | "+z+" | "+u+" | "+dd)});
-  var t="ZAMBIA BIDS & OFFERS\nZMB | DATE | "+fmtDate(S.dt)+"\nZMB | REP | "+(clean(S.rep)||"-")+"\n(Side | Product | Location | Counterparty | ZMW/l | $/m3 | DAP $/m3)\n"+ok.join("\n");
-  return{t:t,n:ok.length,bad:bad,nodap:nodap}}
-function preview(){var b=build();document.getElementById("pv").textContent=b.t;
-  var m=[];if(b.bad)m.push(b.bad+" line(s) have no valid price and will be left out.");if(b.nodap)m.push(b.nodap+" line(s) have no DAP equivalent.");if(!b.n)m.push("Add at least one price.");document.getElementById("msg").textContent=m.join(" ")}
-function copyMsg(){var b=build();if(!b.n)return;var done=function(){document.getElementById("msg").textContent="Copied. Paste it into WhatsApp."};
-  if(navigator.clipboard)navigator.clipboard.writeText(b.t).then(done,function(){fallback(b.t);done()});else{fallback(b.t);done()}}
+function fmt(n,d){return n.toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d})}
+function quoteTxt(l){var p=num(l.px);if(l.basis==="DAP")return"Quoted DAP";if(p===null)return"";return l.basis==="USD"?"$"+fmt(p,0)+"/m³":"K"+fmt(p,2)+"/l"}
+function headDate(){var p=(S.dt||"").split("-");if(p.length<3)return"—";var d=new Date(+p[0],+p[1]-1,+p[2]);
+  return d.getDate()+" "+MON[d.getMonth()]+'<small>Zambia prices, '+["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][d.getDay()]+'</small>'}
+function sideHTML(side){
+  var cls=side==="BID"?"b":"o",items=[];
+  S.lines.forEach(function(l,i){if(l.prod===S.prod&&l.side===side)items.push({l:l,i:i,d:num(l.dap)})});
+  items.sort(function(a,b){if(a.d===null)return 1;if(b.d===null)return -1;return side==="BID"?b.d-a.d:a.d-b.d});
+  var h='<div class="sh">'+(side==="BID"?"Bids":"Offers")+'<span>DAP $/m³</span></div>';
+  if(!items.length)h+='<div class="empty">'+(side==="BID"?"No bids yet":"No offers yet")+'</div>';
+  items.forEach(function(it,k){var l=it.l;
+    h+='<button type="button" class="q'+(k===0&&it.d!==null?" best":"")+'" data-i="'+it.i+'">'+
+      (it.d===null?'<span class="nodap">DAP missing</span>':'<span class="px">'+fmt(it.d,0)+'</span>')+
+      '<span class="meta">'+esc(clean(l.cpty)||"Unnamed")+(clean(l.loc)?", "+esc(clean(l.loc)):"")+'</span><span class="meta">'+esc(quoteTxt(l))+'</span></button>'});
+  h+='<button type="button" class="add" data-add="'+side+'">'+(side==="BID"?"+ Bid":"+ Offer")+'</button>';
+  return '<div class="side '+cls+'">'+h+'</div>'}
+function best(side){var v=null;S.lines.forEach(function(l){var d=num(l.dap);if(l.prod===S.prod&&l.side===side&&d!==null){if(v===null||(side==="BID"?d>v:d<v))v=d}});return v}
+function render(){
+  $("day").innerHTML=headDate();$("rep").value=S.rep||"";$("dt").value=S.dt;
+  document.querySelectorAll(".prod button").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.p===S.prod))});
+  var c=function(p){return S.lines.filter(function(l){return l.prod===p}).length};
+  $("ctD").textContent=c("DIESEL")||"";$("ctP").textContent=c("PETROL")||"";
+  var bb=best("BID"),bo=best("OFFER"),sp="";
+  if(bb!==null&&bo!==null)sp='<div class="spread"><div>'+(bo>=bb?"Spread $"+fmt(bo-bb,0)+"/m³":"Crossed by $"+fmt(bb-bo,0)+"/m³")+'</div></div>';
+  $("book").innerHTML=sideHTML("BID")+sideHTML("OFFER")+sp;
+  var b=build();$("pv").textContent=b.t;
+  $("note").innerHTML=b.n?(b.n+" ready"+(b.nodap?'<br><b>'+b.nodap+' missing DAP</b>':"")):"Add a bid or offer to start";
+  $("send").disabled=!b.n;$("copy").disabled=!b.n}
+function fmtDate(s){var p=(s||"").split("-");return p.length<3?s:p[2]+"-"+MON[+p[1]-1]+"-"+p[0]}
+function build(){var ok=[],nodap=0;
+  ["DIESEL","PETROL"].forEach(function(pr){["BID","OFFER"].forEach(function(sd){S.lines.forEach(function(l){if(l.prod!==pr||l.side!==sd)return;
+    var bs=l.basis||"ZMW",p=bs==="DAP"?null:num(l.px),d=num(l.dap);if(bs!=="DAP"&&p===null)return;if(bs==="DAP"&&d===null)return;if(d===null)nodap++;
+    ok.push("ZMB | "+l.side+" | "+l.prod+" | "+(clean(l.loc)||"-")+" | "+(clean(l.cpty)||"-")+" | "+(bs==="ZMW"?p.toFixed(2):"-")+" | "+(bs==="USD"?p.toFixed(2):"-")+" | "+(d===null?"-":d.toFixed(2)))})})});
+  return{t:"ZAMBIA BIDS & OFFERS\nZMB | DATE | "+fmtDate(S.dt)+"\nZMB | REP | "+(clean(S.rep)||"-")+"\n(Side | Product | Location | Counterparty | ZMW/l | $/m3 | DAP $/m3)\n"+ok.join("\n"),n:ok.length,nodap:nodap}}
+/* editor */
+var ed={i:-1,side:"BID",basis:"ZMW"};
+function setBasis(b){ed.basis=b;document.querySelectorAll("#f_basis button").forEach(function(x){x.setAttribute("aria-pressed",String(x.dataset.b===b))});
+  $("f_pxw").style.display=b==="DAP"?"none":"";$("pxrow").style.gridTemplateColumns=b==="DAP"?"1fr":"1fr 1fr";
+  $("f_pxl").textContent=b==="USD"?"Price, $ per m³":"Price, K per litre";$("f_dapl").textContent=b==="DAP"?"DAP price, $ per m³":"DAP equivalent, $ per m³"}
+function openEd(i,side){var l=i>=0?S.lines[i]:null,last=S.lines.filter(function(x){return x.prod===S.prod}).slice(-1)[0];
+  ed.i=i;ed.side=l?l.side:side;
+  $("ft").textContent=(l?"Edit ":"New ")+(S.prod==="DIESEL"?"diesel ":"petrol ")+(ed.side==="BID"?"bid":"offer");$("ft").className="ft "+(ed.side==="BID"?"b":"o");
+  $("f_cp").value=l?l.cpty:"";$("f_loc").value=l?l.loc:(last?last.loc:"");$("f_px").value=l?l.px:"";$("f_dap").value=l?l.dap:"";
+  setBasis(l?(l.basis||"ZMW"):(last?last.basis||"ZMW":"ZMW"));$("err").textContent="";
+  $("del").style.visibility=l?"visible":"hidden";$("save").textContent=l?"Save":"Add to book";
+  $("dlg").showModal();setTimeout(function(){$("f_cp").focus()},60)}
+$("f_basis").addEventListener("click",function(e){var b=e.target.closest("button");if(b)setBasis(b.dataset.b)});
+$("frm").addEventListener("submit",function(e){e.preventDefault();
+  var p=num($("f_px").value),d=num($("f_dap").value);
+  if(ed.basis!=="DAP"&&p===null){$("err").textContent="Type the price as quoted.";$("f_px").focus();return}
+  if(ed.basis==="DAP"&&d===null){$("err").textContent="Type the DAP price.";$("f_dap").focus();return}
+  var l={side:ed.side,prod:S.prod,loc:$("f_loc").value.trim(),cpty:$("f_cp").value.trim(),basis:ed.basis,px:ed.basis==="DAP"?"":$("f_px").value.trim(),dap:$("f_dap").value.trim()};
+  if(ed.i>=0)S.lines[ed.i]=l;else S.lines.push(l);save();$("dlg").close();render()});
+$("del").addEventListener("click",function(){if(ed.i>=0){S.lines.splice(ed.i,1);save()}$("dlg").close();render()});
+$("dlg").addEventListener("click",function(e){if(e.target===this)this.close()});
+$("book").addEventListener("click",function(e){var a=e.target.closest("[data-add]");if(a){openEd(-1,a.dataset.add);return}var q=e.target.closest(".q");if(q)openEd(+q.dataset.i)});
+document.querySelector(".prod").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;S.prod=b.dataset.p;save();render()});
+$("rep").addEventListener("input",function(){S.rep=this.value;save();render()});
+$("dt").addEventListener("input",function(){S.dt=this.value;save();render()});
+$("newday").addEventListener("click",function(){if(!S.lines.length)return;if(this.dataset.arm){S.lines=[];save();render();this.textContent="Clear the book for a new day";delete this.dataset.arm;return}
+  this.dataset.arm=1;this.textContent="Tap again to clear every price";var t=this;setTimeout(function(){delete t.dataset.arm;t.textContent="Clear the book for a new day"},3000)});
 function fallback(t){var a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(e){}a.remove()}
-function sendWA(){var b=build();if(!b.n)return;window.open("https://wa.me/?text="+encodeURIComponent(b.t),"_blank")}
+$("copy").addEventListener("click",function(){var b=build();if(!b.n)return;var ok=function(){$("note").textContent="Copied. Paste it into WhatsApp."};
+  if(navigator.clipboard)navigator.clipboard.writeText(b.t).then(ok,function(){fallback(b.t);ok()});else{fallback(b.t);ok()}});
+$("send").addEventListener("click",function(){var b=build();if(b.n)window.open("https://wa.me/?text="+encodeURIComponent(b.t),"_blank")});
 load();render();
 </script></body></html>
