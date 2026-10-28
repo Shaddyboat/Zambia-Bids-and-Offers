@@ -1,5 +1,8 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Zambia Order Book</title>
+<title>Zambia B&amp;O</title>
+<meta name="apple-mobile-web-app-title" content="Zambia B&amp;O"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="theme-color" content="#14221A">
+<link rel="apple-touch-icon" href="icon.png"><link rel="icon" type="image/png" href="icon.png"><link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap">
 <style>
@@ -156,11 +159,22 @@ function render(){
   $("note").innerHTML=b.n?(b.n+" ready"+(b.nodap?'<br><b>'+b.nodap+' missing DAP</b>':"")):"Add a bid or offer to start";
   $("send").disabled=!b.n;$("copy").disabled=!b.n}
 function fmtDate(s){var p=(s||"").split("-");return p.length<3?s:p[2]+"-"+MON[+p[1]-1]+"-"+p[0]}
-function build(){var ok=[],nodap=0;
-  ["DIESEL","PETROL"].forEach(function(pr){["BID","OFFER"].forEach(function(sd){S.lines.forEach(function(l){if(l.prod!==pr||l.side!==sd)return;
-    var bs=l.basis||"ZMW",p=bs==="DAP"?null:num(l.px),d=num(l.dap);if(bs!=="DAP"&&p===null)return;if(bs==="DAP"&&d===null)return;if(d===null)nodap++;
-    ok.push("ZMB | "+l.side+" | "+l.prod+" | "+(clean(l.loc)||"-")+" | "+(clean(l.cpty)||"-")+" | "+(bs==="ZMW"?p.toFixed(2):"-")+" | "+(bs==="USD"?p.toFixed(2):"-")+" | "+(d===null?"-":d.toFixed(2)))})})});
-  return{t:"ZAMBIA BIDS & OFFERS\nZMB | DATE | "+fmtDate(S.dt)+"\nZMB | REP | "+(clean(S.rep)||"-")+"\n(Side | Product | Location | Counterparty | ZMW/l | $/m3 | DAP $/m3)\n"+ok.join("\n"),n:ok.length,nodap:nodap}}
+function nm(s){return String(s||"").replace(/[|·*_~]/g," ").replace(/\s+/g," ").trim()}
+function money(n){return "$"+fmt(n,0)}
+function build(){var out=[],n=0,nodap=0,DAYS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  var p=(S.dt||"").split("-"),d=p.length===3?new Date(+p[0],+p[1]-1,+p[2]):new Date();
+  var head="*Zambia bids & offers*\n_"+DAYS[d.getDay()]+" "+d.getDate()+" "+MON[d.getMonth()]+" "+d.getFullYear()+(nm(S.rep)?" · "+nm(S.rep):"")+"_";
+  ["DIESEL","PETROL"].forEach(function(pr){var rows=[],bb=null,bo=null;
+    ["BID","OFFER"].forEach(function(sd){
+      var items=S.lines.filter(function(l){return l.prod===pr&&l.side===sd}).map(function(l){return{l:l,d:num(l.dap)}});
+      items.sort(function(x,y){if(x.d===null)return 1;if(y.d===null)return -1;return sd==="BID"?y.d-x.d:x.d-y.d});
+      items.forEach(function(it){var l=it.l,bs=l.basis||"ZMW",px=num(l.px);
+        if(bs!=="DAP"&&px===null)return;if(bs==="DAP"&&it.d===null)return;
+        if(it.d===null)nodap++;else if(sd==="BID"){if(bb===null||it.d>bb)bb=it.d}else{if(bo===null||it.d<bo)bo=it.d}
+        var q=bs==="ZMW"?"K"+fmt(px,2)+"/l":(bs==="USD"?money(px)+"/m³":"");
+        rows.push((sd==="BID"?"🟢 Bid ":"🟠 Offer ")+(it.d===null?"_no DAP_":"*"+money(it.d)+"*/m³ DAP")+" · "+(nm(l.cpty)||"Unnamed")+" · "+(nm(l.loc)||"–")+(q?" · "+q:""));n++})});
+    if(rows.length){out.push("","*"+pr+"*");out=out.concat(rows);if(bb!==null&&bo!==null)out.push("_Spread "+(bo>=bb?money(bo-bb):"crossed "+money(bb-bo))+"/m³_")}});
+  return{t:head+"\n"+out.join("\n"),n:n,nodap:nodap}}
 /* editor */
 var ed={i:-1,side:"BID",basis:"ZMW"};
 function setBasis(b){ed.basis=b;document.querySelectorAll("#f_basis button").forEach(function(x){x.setAttribute("aria-pressed",String(x.dataset.b===b))});
